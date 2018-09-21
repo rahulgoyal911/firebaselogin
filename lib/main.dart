@@ -28,6 +28,8 @@ class MyHomePage extends StatefulWidget {
 
 class MyHomePageState extends State<MyHomePage> {
   String myText = null;
+  StreamSubscription<DocumentSnapshot> subscription;
+
   final DocumentReference documentReference =
       Firestore.instance.document("myData/dummy");
 
@@ -85,6 +87,25 @@ class MyHomePageState extends State<MyHomePage> {
         });
       }
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    subscription = documentReference.snapshots().listen((datasnapshot) {
+      if (datasnapshot.exists) {
+        setState(() {
+          myText = datasnapshot.data['desc'];
+        });
+      }
+    });
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    subscription?.cancel();
   }
 
   @override
